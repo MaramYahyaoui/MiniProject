@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template">
+      
+<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<head>
+<meta charset="utf-8">
+<title>List Makeup</title>
+</head>
+<body>
+ <div layout:fragment="Mycontent">
+<div class="container">
+<div class="card">
+  <div class="card-header">
+    List Makeup
+  </div>
+  <div class="card-body">
+  <form th:action="@{chercherCat}" method="get">
+			<div class="mb-3">
+		 		<div class="from-group">
+		 			<label class="control-label">Brand</label>
+ 					<select name="idCat" class="form-control" style="width:400px;">
+  						<option th:each="c:${categorie}"  th:value="${c.idCat}" th:text="${c.nomCat}"></option>
+					</select>
+		 		</div>
+				<input type="submit" class="btn btn-primary" value="Chercher"> 
+			</div>
+ 		</form>
+      <table class="table table-striped">
+        <tr>
+          <th>ID</th><th>Name Makeup</th><th>Price</th><th>Date Création</th><th>Brand</th>
+         </tr>  
+           <tr th:each="p:${makeup.content}">
+              <td th:text="${p.idMakeup}"></td>
+              <td th:text="${p.nomMakeup}"></td>
+              <td th:text="${p.prixMakeup}"></td>  
+              <td th:text="${p.dateCreation}"></td> 
+   
+   
+              <td   th:if= "${!#strings.isEmpty(p.categorie)}"   th:text="${p.categorie.nomCat}"></td>  
+              <td   th:if= "${#strings.isEmpty(p.categorie)}"     th:text="${'Pas de Catégorie'}"></td> 
+               	
+
+               <td sec:authorize="hasRole('ADMIN')" ><a class="btn btn-danger"
+onclick="return confirm('Are you sure ?')"
+th:href="@{supprimerMakeup(id=${p.idMakeup},
+page=${currentPage},size=${size})}">Delete</a>
+</td>
+              <td sec:authorize="hasRole('ADMIN')"><a class="btn btn-success"
+th:href="@{modifierMakeup(id=${p.idMakeup})}">Edit</a></td>
+           </tr>             
+      </table>
+            <ul class="nav nav-pills">
+         <li th:each="page,status:${pages}">
+           <a th:class="${status.index==currentPage?'btn btn-primary':'btn'  }" 
+              th:href="@{ ListeMakeup(page=${status.index}, size=${size} ) }"
+              th:text="${status.index }"></a>
+         </li>
+      </ul>
+      
+  </div>
+</div>
+</div>
+</div>
+</body>
+</html>
